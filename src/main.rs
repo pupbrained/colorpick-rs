@@ -1,5 +1,5 @@
 use std::{thread, time::Duration, io::ErrorKind::WouldBlock};
-use rdev::{listen, Event, Button::Left, EventType::ButtonPress};
+use rdev::{listen, Event, Button::{Left, Right}, EventType::ButtonPress};
 use device_query::{DeviceQuery, DeviceState, MouseState};
 use scrap::{Capturer, Display};
 
@@ -29,7 +29,6 @@ fn get_screen() {
             }
         };
 
-        println!("Captured! Please wait...");
         let stride = buffer.len() / h;
         let index = stride as i32 * mouse.coords.1 + 4 * mouse.coords.0;
         let i = index as usize;
@@ -42,12 +41,12 @@ fn get_screen() {
 
         break;
     }
-    std::process::exit(0);
 }
 
 fn callback(event: Event) {
     match event.event_type {
         ButtonPress(Left) => get_screen(),
+        ButtonPress(Right) => std::process::exit(0),
         _ => ()
     }
 }
