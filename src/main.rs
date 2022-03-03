@@ -3,20 +3,28 @@ use rdev::{listen, Event, Button::{Left, Right}, EventType::ButtonPress};
 use device_query::{DeviceQuery, DeviceState, MouseState};
 use scrap::{Capturer, Display};
 
+// Reformats the rgb values to a hex string
 fn convert_to_hex(r: u8, g: u8, b: u8) -> String {
     format!("{:02X}{:02X}{:02X}", r, g, b) 
 }
 
 fn get_screen() {
+
+    // Get mouse coords
     let device_state = DeviceState::new();
     let mouse: MouseState = device_state.get_mouse();
+    
+    // Define one frame of a screen record, in order to get a screenshot
     let one_second = Duration::new(1, 0);
     let one_frame = one_second / 60;
+    
+    // Create a capturer
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
     let h = capturer.height();
+    
     loop {
-
+        // Capture a screenshot
         let buffer = match capturer.frame() {
             Ok(buffer) => buffer,
             Err(error) => {
@@ -29,6 +37,7 @@ fn get_screen() {
             }
         };
 
+        // Get the pixel at the mouse coords
         let stride = buffer.len() / h;
         let index = stride as i32 * mouse.coords.1 + 4 * mouse.coords.0;
         let i = index as usize;
@@ -36,9 +45,9 @@ fn get_screen() {
         let g = buffer[i+1];
         let b = buffer[i];
 
+        // Print out color info
         println!("Pixel color RGB: ({}, {}, {})", r, g, b);
         println!("Pixel color Hex: #{}", convert_to_hex(r, g, b));
-
         break;
     }
 }
