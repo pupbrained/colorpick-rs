@@ -1,8 +1,7 @@
-use std::{fs::{File, remove_file}, thread, time::Duration, io::ErrorKind::WouldBlock};
+use std::{thread, time::Duration, io::ErrorKind::WouldBlock};
 use rdev::{listen, Event, Button::Left, EventType::ButtonPress};
 use device_query::{DeviceQuery, DeviceState, MouseState};
 use scrap::{Capturer, Display};
-use image::{ImageBuffer, Rgb};
 
 fn convert_to_hex(r: u8, g: u8, b: u8) -> String {
     format!("{:02X}{:02X}{:02X}", r, g, b) 
@@ -15,7 +14,7 @@ fn get_screen() {
     let one_frame = one_second / 60;
     let display = Display::primary().expect("Couldn't find primary display.");
     let mut capturer = Capturer::new(display).expect("Couldn't begin capture.");
-    let (w, h) = (capturer.width(), capturer.height());
+    let h = capturer.height();
     loop {
 
         let buffer = match capturer.frame() {
@@ -34,7 +33,6 @@ fn get_screen() {
         let stride = buffer.len() / h;
         let index = stride as i32 * mouse.coords.1 + 4 * mouse.coords.0;
         let i = index as usize;
-        println!("Index: {}", i);
         let r = buffer[i+2];
         let g = buffer[i+1];
         let b = buffer[i];
