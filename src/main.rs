@@ -52,6 +52,7 @@ fn callback(event: Event) {
 }
 
 fn main() {
+    println!("Press left mouse button to get screen color, or right mouse button to exit.");
     if let Err(error) = listen(callback) {
         println!("Error: {:?}", error)
     }
