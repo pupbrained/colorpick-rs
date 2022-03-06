@@ -1,4 +1,4 @@
-use std::{thread, time::Duration, io::ErrorKind::WouldBlock};
+use std::{env, thread, time::Duration, io::ErrorKind::WouldBlock};
 use rdev::{listen, Event, Button::{Left, Right}, EventType::ButtonPress};
 use device_query::{DeviceQuery, DeviceState, MouseState};
 use scrap::{Capturer, Display};
@@ -9,7 +9,6 @@ fn convert_to_hex(r: u8, g: u8, b: u8) -> String {
 }
 
 fn get_screen() {
-
     // Get mouse coords
     let device_state = DeviceState::new();
     let mouse: MouseState = device_state.get_mouse();
@@ -60,9 +59,27 @@ fn callback(event: Event) {
     }
 }
 
+fn callback_live(event: Event) {
+    loop {
+        if let ButtonPress(Right) = event.event_type {
+            std::process::exit(0)
+        } 
+        get_screen();
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    }
+}
+
 fn main() {
-    println!("Press left mouse button to get screen color, or right mouse button to exit.");
-    if let Err(error) = listen(callback) {
-        println!("Error: {:?}", error)
+    let args: Vec<String> = env::args().collect();
+    if args[1] != "live" {
+        println!("Press left mouse button to get screen color, or right mouse button to exit.");
+        if let Err(error) = listen(callback) {
+            println!("Error: {:?}", error)
+        }
+    } else {
+        println!("Use ctrl+c to exit after you're done!");
+        if let Err(error) = listen(callback_live) {
+            println!("Error: {:?}", error)
+        }
     }
 }
