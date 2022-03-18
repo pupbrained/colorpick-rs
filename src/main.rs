@@ -71,15 +71,17 @@ fn callback_live(event: Event) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args[1] != "live" {
+    if args.len() == 1 {
         println!("Press left mouse button to get screen color, or right mouse button to exit.");
         if let Err(error) = listen(callback) {
             println!("Error: {:?}", error)
         }
     } else {
-        println!("Use ctrl+c to exit after you're done!");
+        if args[1] == "--live" || args[1] == "-l" {
+            println!("Use ctrl+c to exit after you're done.");
         if let Err(error) = listen(callback_live) {
             println!("Error: {:?}", error)
+        }
         }
     }
 }
