@@ -3,14 +3,13 @@ authors = [
   "marsupialgutz <https://possums.xyz>",
   "nullobsi <https://nullob.si>",
 ]
-name = "colorpick-rs"
 description = "Simple color picker made in Rust"
-version = "1.0.2"
 edition = "2021"
+name = "colorpick-rs"
+version = "1.1.0"
 
 [dependencies]
-rdev = "0.5.1"
-device_query = "1.0.0"
-scrap = "0.5.0"
 argparse = "0.2.2"
-
+device_query = "1.0.0"
+rdev = "0.5.1"
+scrap = "0.5.0"
